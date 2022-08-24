@@ -1,5 +1,5 @@
 from collections import defaultdict
-from input import aliveCells
+from input import aliveCellsInput
 
 class GameOfLife:
     def __init__(self, aliveCells, rows, columns):
@@ -7,35 +7,37 @@ class GameOfLife:
         self.rows = rows
         self.columns = columns
 
-    def tick(self):
-        aliveNeighbors = defaultdict(int)
-        dirs = [(-1,-1), (-1,0), (-1,1), (1, -1), (1,0), (1,1), (0,1), (0,-1)]
-        for r, c in self.aliveCells:
-            for dr, dc in dirs:
-                nr, nc = r + dr, c + dc
-                aliveNeighbors[(nr, nc)] += 1
+    def tick(self, numTicks = 1):
+        for i in range(numTicks):
+            aliveNeighbors = defaultdict(int)
+            dirs = [(-1,-1), (-1,0), (-1,1), (1, -1), (1,0), (1,1), (0,1), (0,-1)]
+            for x, y in self.aliveCells:
+                for dx, dy in dirs:
+                    nx, ny = x + dx, y + dy
+                    aliveNeighbors[(nx, ny)] += 1
 
-        nextAliveCells = set()
-        for r, c in aliveNeighbors:
-            numAliveNeighbors = aliveNeighbors[(r, c)]
-            if numAliveNeighbors == 3 or ((r, c) in aliveCells and numAliveNeighbors == 2):
-                nextAliveCells.add((r, c))
-        self.aliveCells = nextAliveCells
+            nextAliveCells = set()
+            for x, y in aliveNeighbors:
+                numAliveNeighbors = aliveNeighbors[(x, y)]
+                if numAliveNeighbors == 3 or ((x, y) in self.aliveCells and numAliveNeighbors == 2):
+                    nextAliveCells.add((x, y))
+            self.aliveCells = nextAliveCells
 
     def __str__(self):
         output = ""
-        for c in range(self.columns):
-            for r in range(self.rows):
-                output += 'O|' if (r, c) in self.aliveCells else ' |'
+        for y in range(self.columns):
+            for x in range(self.rows):
+                output += 'O|' if (x, y) in self.aliveCells else ' |'
             output += "\n"
         return output
     
     def printAliveCells(self):
         print(self.aliveCells)
-
-game = GameOfLife(aliveCells, 8, 8)
+    
+game = GameOfLife(aliveCellsInput, 8, 8)
 print(game)
 game.printAliveCells()
-game.tick()
+
+game.tick(10)
 print(game)
 game.printAliveCells()
